@@ -1,5 +1,6 @@
 package com.sagar.azurepr.exception;
 
+import com.sagar.azurepr.exception.exceptions.UrlInvalidException;
 import com.sagar.azurepr.exception.exceptions.UrlNotFoundException;
 import com.sagar.azurepr.model.Url;
 import lombok.extern.slf4j.Slf4j;
@@ -37,5 +38,16 @@ public class UrlShortenerExceptionHandler extends ResponseEntityExceptionHandler
                 .build();
         log.info("URL not present");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+    }
+
+    @ExceptionHandler(UrlInvalidException.class)
+    public final ResponseEntity<Object> handleUrlInvalidExceptions(UrlInvalidException exception, WebRequest webRequest) {
+        ErrorMessage errorMessage =  ErrorMessage.builder()
+                .timestamp(new Date())
+                .message(exception.getMessage())
+                .description(webRequest.getDescription(false))
+                .build();
+        log.info("URL is not valid");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }
 }
